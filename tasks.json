@@ -1,0 +1,161 @@
+{
+    "random_onion": { 
+        "weight": 50,
+        "url": "http://62.142.11.10/parazit1/onion.php",
+        "hashtags": ["tor", "netrandom"]
+    },
+    "keyword_ip_search": {
+        "weight": 50,
+        "links": [
+            "shodan.io/search?query={}",
+            "censys.io/ipv4?q={}"
+        ],
+        "keywords": ["router","bgp","webcam","homepage","сорм","скат","admin","cia","fbi","gov","webcamera","gate","sip","netcam","dreambox","mongo","twonky","MiniServ","nas","AVTech","honeypot","scada"],
+        "hashtags": ["delisearch"]
+    },
+    "random_symbols_search": {
+        "weight": 50,
+        "symbols": ["0123456789abcdefghijklmnopqrtsuvwxyz"],
+        "min_length": 4,
+        "max_length": 7,
+        "links": [
+            "google.ru?q={}",
+            "duckduckgo.com?q={}",
+            "yandex.ru/search?text={}"
+        ],
+        "hashtags": ["netrandom"]
+    },
+    "random_darknet": {
+        "weight": 70,
+        "darknets": [
+            {
+                "name": "Tor",
+                "links": [
+                    "https://www.torproject.org",
+                    "https://zqktlwi4fecvo6ri.onion.to",
+                    "https://godnotaba36dsabv.onion.link"
+                ],
+                "hashtags": ["tor"]
+            },
+            {
+                "name": "I2P",
+                "links": [
+                    "https://geti2p.net/en/"
+                ],
+                "hashtags": ["i2p"]
+            },
+            {
+                "name": "Usenet",
+                "links": [
+                    "http://binsearch.info/",
+                    "https://nzbfinder.ws/"
+                ],
+                "hashtags": ["usenet"]
+            },
+            {
+                "name": "IRC",
+                "links": [
+                    "http://ixirc.com/",
+                    "http://www.xdcc.eu/",
+                    "http://sunxdcc.com/",
+                    "https://www.cr4wl.ga/"
+                ],
+                "hashtags": ["irc","dcc","xdcc"]
+            },
+            {
+                "name": "DC++",
+                "links": [
+                    "http://www.flylinkdc.com/",
+                    "http://spacelib.dlinkddns.com/",
+                    "http://dcpoisk.no-ip.org/"
+                ],
+                "hashtags": ["dc"]
+            },
+            {
+                "name": "Kad",
+                "links": [
+                    "http://www.emule-project.net/"
+                ],
+                "hashtags": ["ed2k", "kad"]
+            },
+            {
+                "name": "Soulseek",
+                "links": [
+                    "http://www.soulseekqt.net/news/"
+                ],
+                "hashtags": ["music"]
+            },
+            {
+                "name": "BitTorrent",
+                "links": [
+                    "http://btkitty.bid/",
+                    "https://bitsnoop.com/",
+                    "https://www.digbt.org/"
+                ],
+                "hashtags": ["torrent"]
+            },
+            {
+                "name": "FTP",
+                "links": [
+                    "http://www.mmnt.net/",
+                    "http://krasfs.ru/"
+                ],
+                "hashtags": ["torrent"]
+            },
+            {
+                "name": "Ygoow",
+                "links": [
+                    "http://ygoow.com/"
+                ],
+                "hashtags": ["ygoow"]
+            },
+            {
+                "name": "Perfect Dark",
+                "links": [
+                    "https://en.wikipedia.org/wiki/Perfect_Dark_(P2P)",
+                    "https://perfectdark.benri-tool.net/"
+                ],
+                "hashtags": ["p2p"]
+            },
+            {
+                "name": "RetroShare",
+                "links": [
+                    "http://retroshare.net/"
+                ],
+                "hashtags": ["retroshare"]
+            },
+            {
+                "name": "Gnutella",
+                "links": [
+                    "https://ru.wikipedia.org/wiki/Gnutella",
+                    "http://shareaza.sourceforge.net/"
+                ],
+                "hashtags": ["gnutella"]
+            },
+            {
+                "name": "Gnutella2",
+                "links": [
+                    "https://ru.wikipedia.org/wiki/Gnutella2",
+                    "http://shareaza.sourceforge.net/"
+                ],
+                "hashtags": ["gnutella2"]
+            },
+            {
+                "name": "Nanoboard",
+                "links": [
+                    "https://github.com/nanoboard/nanoboard/releases",
+                    "http://shareaza.sourceforge.net/"
+                ],
+                "hashtags": ["nanoboard","stego"]
+            },
+            {
+                "name": "DDT",
+                "links": [
+                    "https://github.com/desudesutalk/desudesutalk"
+                ],
+                "hashtags": ["ddt","stego"]
+            }
+        ],
+        "hashtags": ["darknet"]
+    }
+}

@@ -1,0 +1,5 @@
+GeoIP
+pytelegrambotapi
+requests
+PySocks
+pillow
