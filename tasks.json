@@ -32,6 +32,7 @@
                 "name": "Tor",
                 "links": [
                     "https://www.torproject.org",
+                    "https://ahmia.fi/",
                     "https://zqktlwi4fecvo6ri.onion.to",
                     "https://godnotaba36dsabv.onion.link"
                 ],
@@ -47,6 +48,7 @@
             {
                 "name": "Usenet",
                 "links": [
+                    "https://groups.google.com/",
                     "http://binsearch.info/",
                     "https://nzbfinder.ws/"
                 ],
@@ -92,7 +94,7 @@
                     "https://bitsnoop.com/",
                     "https://www.digbt.org/"
                 ],
-                "hashtags": ["torrent"]
+                "hashtags": ["bittorrent"]
             },
             {
                 "name": "FTP",
@@ -100,7 +102,7 @@
                     "http://www.mmnt.net/",
                     "http://krasfs.ru/"
                 ],
-                "hashtags": ["torrent"]
+                "hashtags": ["ftp"]
             },
             {
                 "name": "Ygoow",
@@ -125,10 +127,19 @@
                 "hashtags": ["retroshare"]
             },
             {
+                "name": "Freenet",
+                "links": [
+                    "https://freenetproject.org/",
+                    "https://d6.gnutella2.info/freenet"
+                ],
+                "hashtags": ["freenet","p2p"]
+            },
+            {
                 "name": "Gnutella",
                 "links": [
                     "https://ru.wikipedia.org/wiki/Gnutella",
-                    "http://shareaza.sourceforge.net/"
+                    "http://shareaza.sourceforge.net/",
+                    "http://www.freelimewiredownload.net/"
                 ],
                 "hashtags": ["gnutella"]
             },
@@ -143,8 +154,7 @@
             {
                 "name": "Nanoboard",
                 "links": [
-                    "https://github.com/nanoboard/nanoboard/releases",
-                    "http://shareaza.sourceforge.net/"
+                    "https://github.com/nanoboard/nanoboard/releases"
                 ],
                 "hashtags": ["nanoboard","stego"]
             },
@@ -154,6 +164,64 @@
                     "https://github.com/desudesutalk/desudesutalk"
                 ],
                 "hashtags": ["ddt","stego"]
+            },
+            {
+                "name": "ZeroNet",
+                "links": [
+                    "https://zeronet.io/"
+                ],
+                "hashtags": ["zeronet","bittorrent","p2p"]
+            },
+            {
+                "name": "Gopher",
+                "links": [
+                    "http://gopher.floodgap.com/gopher/",
+                    "https://addons.mozilla.org/ru/firefox/addon/overbiteff/"
+                ],
+                "hashtags": ["gopher"]
+            },
+            {
+                "name": "GNUnet",
+                "links": [
+                    "https://gnunet.org/"
+                ],
+                "hashtags": ["p2p","gnunet"]
+            },
+            {
+                "name": "FidoNet",
+                "links": [
+                    "https://www.fidonet.org/"
+                ],
+                "hashtags": ["fidonet"]
+            },
+            {
+                "name": "Hotline",
+                "links": [
+                    "http://hotline.wikia.com/wiki/Hotline_Wiki",
+                    "http://hlsite.chat.ru/index.html"
+                ],
+                "hashtags": ["hotline"]
+            },
+            {
+                "name": "RShare",
+                "links": [
+                    "http://www.stealthnet.de/"
+                ],
+                "hashtags": ["rshare","p2p"]
+            },
+            {
+                "name": "MUTE",
+                "links": [
+                    "http://mute-net.sourceforge.net/"
+                ],
+                "hashtags": ["mute","p2p"]
+            },
+            {
+                "name": "Ares Galaxy",
+                "links": [
+                    "https://aresgalaxy.io/"
+                ],
+                "hashtags": ["ares","bittorrent"]
             }
         ],
         "hashtags": ["darknet"]
