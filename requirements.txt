@@ -6,3 +6,4 @@ pillow
 telebot
 netaddr
 requests[socks]
+BeautifulSoup4

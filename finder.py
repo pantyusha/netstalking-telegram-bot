@@ -1,20 +1,17 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-import queue
-import threading
 import urllib
 import config
 import socks
 import socket
 import struct
 import random
-import traceback
 import requests
-import sys
 import time
 import re
 import netaddr
 import logging
+import bs4
 
 from globaldata import ip_found
 from globaldata import screen_queue
@@ -33,7 +30,7 @@ opener = urllib.request.build_opener(
 urllib.request.install_opener(opener)
 
 # regexp для извлечения заголовка
-title_regex = re.compile('<title.*?>(.+?)</title>', re.IGNORECASE)
+title_regex = re.compile(r'<title.*?>(.+?)</title>', re.IGNORECASE)
 
 # ФУНКЦИИ РАНДОМИЗАЦИИ 
 
@@ -108,18 +105,35 @@ def get_http_response(ip, port):
     try:
         response = requests.get('http://{}:{}/'.format(ip, port), timeout=config.http_wait, proxies=config.tor_proxy)
 
+        text = response.text
+
+        # pass in explicit encoding if set as a header
+        encoding = response.encoding if 'charset' in response.headers.get('content-type', '').lower() else None
+        content = response.content
+        soup = bs4.BeautifulSoup(content, "html.parser", from_encoding=encoding)
+        if soup.original_encoding != 'utf-8':
+            meta = soup.select_one('meta[charset], meta[http-equiv="Content-Type"]')
+            if meta:
+                # replace the meta charset info before re-encoding
+                if 'charset' in meta.attrs:
+                    meta['charset'] = 'utf-8'
+                else:
+                    meta['content'] = 'text/html; charset=utf-8'
+            # re-encode to UTF-8
+            text = soup.prettify()  # encodes to UTF-8 by default
+
         # формируем текст сопроводительного сообщения
         # хэштег с кодом
-        restext = "#code{}".format(response.status_code) 
+        restext = "#code{}".format(response.status_code)
 
         # добавляем заголовок сервера в качестве хэштега 
         if 'Server' in response.headers:
             restext += " #{}".format(response.headers['Server'])
 
         # добавляем заголовок
-        title = title_regex.search(response.text)
+        title = soup.select_one('title').string
         if title:
-            title = "{}\n".format(title.group(1))
+            title = title + "\n"
         else:
             title = ""
 
@@ -133,7 +147,7 @@ def get_http_response(ip, port):
         if response.status_code in [400, 403] \
                 and "Server" in response.headers \
                 and response.headers["Server"] == "AkamaiGHost" \
-                and "<H1>Invalid URL</H1>" in response.text:
+                and "<H1>Invalid URL</H1>" in   text:
             result = None
         # пропускаем всё что требует авторизации на уровне браузера
         elif response.status_code == 401:
@@ -174,7 +188,7 @@ def ipsearch():
                 if port == 21:
                     data = get_ftp_response(ip)
                 else:
-                    data = get_http_response(ip, port)
+                    data = get_http_response('213.178.227.141', 80)
 
                 if data:
                     logger.info("IP found: {}:{}".format(ip, port))
