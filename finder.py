@@ -33,69 +33,75 @@ title_regex = re.compile('<title.*?>(.+?)</title>', re.IGNORECASE)
 
 # ФУНКЦИИ РАНДОМИЗАЦИИ 
 
+
 def get_random_web_port():
-    #return 80
-    #return random.choice([21,80])
+    # return 80
+    # return random.choice([21,80])
     return random.choice(config.ports)
+
 
 # абсолютно случайный IP
 def get_fully_random_ip():
-    #return "icanhazip.com" # screen test
-    #return "193.43.36.131" # ftp test
+    # return "icanhazip.com" # screen test
+    # return "193.43.36.131" # ftp test
     return str(socket.inet_ntoa(struct.pack('>I', random.randint(1, 0xffffffff))))
+
 
 # случайный IP из подгруженных диапазонов
 def get_random_ip_from_ranges():
     return str(random.choice(random.choice(ip_ranges)))
 
+
 # функция для получения случайного IP, может переключаться
 get_random_ip = get_fully_random_ip
 
+
 # загрузка диапазонов из файла
 def load_ip_ranges(file):
-    global get_random_ip, get_fully_random_ip
+    global get_random_ip
     total_ranges = 0
     try:
         ip_ranges.clear()
-        with open (file, "r") as diaps:
+        with open(file, "r") as diaps:
             for line in diaps:
                 try:
                     diap = line.split('-')
                     if len(diap) == 2:
-                        ip_ranges.append(netaddr.IPRange(diap[0],diap[1]))
+                        ip_ranges.append(netaddr.IPRange(diap[0], diap[1]))
                     else:
                         ip_ranges.append(netaddr.IPNetwork(diap[0]))
                     
                     total_ranges += 1
 
-                except Exception as e:
+                except Exception:
                     print("Error while adding range {}".format(line))
                     traceback.print_exc(file=sys.stdout)
-    except:
+    except Exception:
         print("Error while loading ranges from {}, switched to fully random mode".format(file))
         get_random_ip = get_fully_random_ip
 
     return total_ranges
 
-# ПОЛУЧЕНИЕ ДАННЫХ
 
+# ПОЛУЧЕНИЕ ДАННЫХ
 def get_ftp_response(ip):
     result = "#FTP\n"
     try:
         response = urllib.request.urlopen("ftp://{}/".format(ip), timeout=config.http_wait).read()
-        fileList = response.decode("utf-8").replace('\r','').split("\n")[1:]
+        filelist = response.decode("utf-8").replace('\r', '').split("\n")[1:]
 
-        for fileName in fileList[:-1]:
+        for fileName in filelist[:-1]:
             result += '{}\n'.format(re.sub(' +', ' ', fileName).split(" ")[-1])
-    except:
+    except Exception:
         return None
 
     return result
 
+
 def get_http_response(ip, port):
     result = None
     response = None
-    html = ""
+
     try:
         response = requests.get('http://{}:{}/'.format(ip, port), timeout=config.http_wait, proxies=config.tor_proxy)
 
@@ -121,13 +127,13 @@ def get_http_response(ip, port):
         # по-хорошему, надо вынести в конфиг или отдельный файл
 
         # пропускаем Akamai
-        if (response.status_code == 400 and
-            "Server" in response.headers and
-            response.headers["Server"] == "AkamaiGHost" and 
-            "<H1>Invalid URL</H1>" in response.text):
+        if response.status_code == 400 \
+                and "Server" in response.headers \
+                and response.headers["Server"] == "AkamaiGHost" \
+                and "<H1>Invalid URL</H1>" in response.text:
             result = None
         # пропускаем всё что требует авторизации на уровне браузера
-        elif (response.status_code == 401):
+        elif response.status_code == 401:
             result = None
         # пропускаем Cloudflare 1003
         # elif (response.status_code == 403 and
@@ -141,8 +147,8 @@ def get_http_response(ip, port):
 
     except Exception as e:
         # раскомментить для отладки
-        #print("Scan thread error: {}".format(e))
-        #traceback.print_exc(file=sys.stdout)
+        # print("Scan thread error: {}".format(e))
+        # traceback.print_exc(file=sys.stdout)
         pass
 
     finally:
@@ -150,6 +156,7 @@ def get_http_response(ip, port):
             response.close()
 
     return result
+
 
 # цикл поиска
 def ipsearch():
@@ -162,7 +169,7 @@ def ipsearch():
             ip = get_random_ip()
             port = get_random_web_port()
             
-            #if (config.DEBUG):
+            # if (config.DEBUG):
             #    print("IP search: {}:{}...".format(ip, port))
 
             try:

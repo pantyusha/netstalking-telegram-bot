@@ -6,7 +6,7 @@ DEBUG = True
 # настройки Tor
 tor_host = "127.0.0.1"
 tor_port = "9150"
-tor_proxy = {'http':'socks5://{}:{}'.format(tor_host, tor_port)}
+tor_proxy = {'http': 'socks5://{}:{}'.format(tor_host, tor_port)}
 
 # список портов для сканирования
 ports = [21, 80, 81, 82, 83, 8000, 8080, 8081, 9000, 9080]

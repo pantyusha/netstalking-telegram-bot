@@ -11,11 +11,12 @@ from globaldata import screen_queue
 from globaldata import ip_found
 from contextlib import contextmanager
 
+
 # функция для обрезки монотонных областей
 # сейчас не используется
 def trim(im):
-    pixel = (255,255,255) # ориентируемся на белый цвет
-    #pixel = im.getpixel((0,0)) # ориентируемся на пиксель с левого верхнего края
+    pixel = (255, 255, 255)  # ориентируемся на белый цвет
+    # pixel = im.getpixel((0,0))  # ориентируемся на пиксель с левого верхнего края
     bg = Image.new(im.mode, im.size, pixel)
     diff = ImageChops.difference(im, bg)
     diff = ImageChops.add(diff, diff, 2.0, -100)
@@ -28,7 +29,7 @@ def trim(im):
 
 
 def get_screenshot(ip, port):
-    thumfile = os.path.join(config.screen_folder,'{}_{}.png'.format(ip, port))
+    thumfile = os.path.join(config.screen_folder, '{}_{}.png'.format(ip, port))
     url = 'http://{}:{}/'.format(ip, port)
 
     service_args = [
@@ -53,7 +54,8 @@ def get_screenshot(ip, port):
     img.save(thumfile)
 
     print("Saved screen of {}:{}".format(ip, port))
-    
+
+
 def screener():
     try:
         while True:
@@ -74,7 +76,6 @@ def screener():
                 # помещаем результат в очередь на отправку вне зависимости от наличия скриншота
                 print("Put {}:{} to result queue".format(ip, port))
                 ip_found.put((ip, port, data))
-                    
 
     except Exception as e:
         print("Screen thread error: {}".format(e))

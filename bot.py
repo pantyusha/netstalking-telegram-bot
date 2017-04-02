@@ -31,9 +31,9 @@ def post_to_chat(chat_id, initiator):
     ip_found.task_done()
 
     # определяем название файла скриншота
-    img_filename = os.path.join(config.screen_folder,'{}_{}.png'.format(ip, port))
+    img_filename = os.path.join(config.screen_folder, '{}_{}.png'.format(ip, port))
 
-    if (config.DEBUG):  
+    if config.DEBUG:
         print(data)
 
     # вытаскиваем геоданные по IP
@@ -81,19 +81,19 @@ def regular_posting():
     while True:
         time.sleep(config.posting_wait)
         
-        while (ip_found.qsize() == 0):
+        while ip_found.qsize() == 0:
             time.sleep(config.screen_wait+config.screen_pause)
 
         for chat in config.chats: 
             try:
                 post_to_chat("@"+chat, chat)
-            except:
+            except Exception:
                 print("Error while posting to {}".format(chat))
 
 
 # функция загрузки диапазонов из файла
 def load_ranges_from_file(filename):
-    count = finder.load_ip_ranges(os.path.join(config.ranges_folder,filename))
+    count = finder.load_ip_ranges(os.path.join(config.ranges_folder, filename))
     if count:
         print("Loaded {} ranges from {}, scanning by ranges mode enabled".format(count, config.range_file))
         finder.get_random_ip = finder.get_random_ip_from_ranges
@@ -117,18 +117,22 @@ def get_ip_every(message):
         if len(args) == 2:
             bot.send_message(message.chat.id, "I will send scan results every {} min".format(args[1]))
             minutes = int(args[1])
-            t = threading.Thread(target=results_sender_thread, args=(message, minutes))
-            t.daemon = True
-            t.start()
+            th = threading.Thread(target=results_sender_thread, args=(message, minutes))
+            th.daemon = True
+            th.start()
         else:
-            bot.send_message(message.chat.id, "Don't understand... send me count of minutes", reply_to_message_id=message.message_id)
+            bot.send_message(message.chat.id,
+                             "Don't understand... send me count of minutes",
+                             reply_to_message_id=message.message_id)
 
 
 # получение количества результатов в очереди
 # нет аргументов
 @bot.message_handler(commands=["get_scanned_count"])
 def get_scanned_count(message):
-    bot.send_message(message.chat.id, "Scanned IP in queue: {}".format(ip_found.qsize()), reply_to_message_id=message.message_id)
+    bot.send_message(message.chat.id,
+                     "Scanned IP in queue: {}".format(ip_found.qsize()),
+                     reply_to_message_id=message.message_id)
 
 
 # получение 20 результатов
@@ -161,14 +165,20 @@ def scan_from_file(message):
         if len(args) == 2:
             count = load_ranges_from_file(args[1])
             if count:
-                bot.send_message(message.chat.id, "Loaded {} ranges from {}, scanning by ranges mode enabled".format(count, args[1]), reply_to_message_id=message.message_id)
+                bot.send_message(message.chat.id,
+                                 "Loaded {} ranges from {}, scanning by ranges mode enabled".format(count, args[1]),
+                                 reply_to_message_id=message.message_id)
             else:
-                bot.send_message(message.chat.id, "Error while loading ranges from {}, switched to fully random mode".format(args[1]), reply_to_message_id=message.message_id)
+                bot.send_message(message.chat.id,
+                                 "Error while loading ranges from {}, switched to fully random mode".format(args[1]),
+                                 reply_to_message_id=message.message_id)
             
         else:
-            bot.send_message(message.chat.id, "Specify name of file with ranges!", reply_to_message_id=message.message_id)
+            bot.send_message(message.chat.id, "Specify name of file with ranges!",
+                             reply_to_message_id=message.message_id)
     else:
-        bot.send_message(message.chat.id, "Sorry, this can do Master shampoo only!", reply_to_message_id=message.message_id)
+        bot.send_message(message.chat.id, "Sorry, this can do Master shampoo only!",
+                         reply_to_message_id=message.message_id)
 
 
 # переключение на сканирования диапазонов по полному рандому
@@ -178,14 +188,15 @@ def scan_random(message):
     if message.from_user.username == config.admin_username:
         bot.send_message(message.chat.id, "Fully random scanning mode enabled")
     else:
-        bot.send_message(message.chat.id, "Sorry, this can do Master shampoo only!", reply_to_message_id=message.message_id)
+        bot.send_message(message.chat.id, "Sorry, this can do Master shampoo only!",
+                         reply_to_message_id=message.message_id)
 
 
 @bot.message_handler(content_types=["text"])
 def hello_shampoo(message):
     text = message.text.lower()  
     if text.find("шампун") != -1 or text.find("пантин") != -1 or text.find("pantene") != -1:
-    	bot.send_message(message.chat.id, "Хоп хей лалалей!")
+        bot.send_message(message.chat.id, "Хоп хей лалалей!")
 
 
 if __name__ == '__main__':
