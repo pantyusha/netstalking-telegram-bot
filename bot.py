@@ -9,18 +9,13 @@ import tasks
 import os
 import sys
 import time
-import struct
-import socket
-import random
 import logging
-import requests
 import threading
 import traceback
 
 import GeoIP
 
 from globaldata import ip_found
-
 
 logging.basicConfig(level=config.log_level, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(name="Bot")
@@ -43,10 +38,10 @@ def post_to_chat(chat_id, initiator):
     # вытаскиваем геоданные по IP
     geoinfo = ""
     geodata = gi.record_by_name(ip)
-    if geodata is not None:
-        if 'country_code3' in geodata and geodata['country_code3'] is not None:
+    if geodata:
+        if 'country_code3' in geodata and geodata['country_code3']:
             geoinfo += "\nCountry: {}".format(geodata['country_code3'])
-        if 'city' in geodata and geodata['city'] is not None:
+        if 'city' in geodata and geodata['city']:
             geoinfo += "\nCity: {}".format(geodata['city'])
 
     # формируем правильную ссылку в зависимости от порта
@@ -91,8 +86,8 @@ def regular_posting():
         for chat in config.chats: 
             try:
                 post_to_chat("@"+chat, chat)
-            except Exception:
-                logger.error("Error while posting to {}".format(chat))
+            except Exception as e:
+                logger.error("Error while posting to {}: {}".format(chat, e))
 
 
 # функция загрузки диапазонов из файла
@@ -199,7 +194,7 @@ def scan_random(message):
 @bot.message_handler(content_types=["text"])
 def hello_shampoo(message):
     text = message.text.lower()  
-    if text.find("шампун") != -1 or text.find("пантин") != -1 or text.find("pantene") != -1:
+    if "шампун" in text or "пантин" in text or "pantene" in text:
         bot.send_message(message.chat.id, "Хоп хей лалалей!")
 
 

@@ -20,7 +20,7 @@ from globaldata import ip_found
 from globaldata import screen_queue
 from globaldata import ip_ranges
 
-from screenshot import get_screenshot
+# from screenshot import get_screenshot
 from sockshandler import SocksiPyHandler
 
 logging.basicConfig(level=config.log_level, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -77,11 +77,10 @@ def load_ip_ranges(file):
                     
                     total_ranges += 1
 
-                except Exception:
-                    logger.error("Error while adding range {}".format(line))
-                    traceback.print_exc(file=sys.stdout)
-    except Exception:
-        logger.error("Error while loading ranges from {}, switched to fully random mode".format(file))
+                except Exception as e:
+                    logger.error("Error while adding range {}: {}".format(line, e))
+    except Exception as e:
+        logger.error("Error while loading ranges from {} ({}), switched to fully random mode".format(file, e))
         get_random_ip = get_fully_random_ip
 
     return total_ranges
@@ -119,10 +118,10 @@ def get_http_response(ip, port):
 
         # добавляем заголовок
         title = title_regex.search(response.text)
-        if title is None:
-            title = ""
-        else:
+        if title:
             title = "{}\n".format(title.group(1))
+        else:
+            title = ""
 
         # записываем текст в result
         result = restext + "\n" + title
@@ -131,7 +130,7 @@ def get_http_response(ip, port):
         # по-хорошему, надо вынести в конфиг или отдельный файл
 
         # пропускаем Akamai
-        if response.status_code == 400 \
+        if response.status_code in [400, 403] \
                 and "Server" in response.headers \
                 and response.headers["Server"] == "AkamaiGHost" \
                 and "<H1>Invalid URL</H1>" in response.text:
@@ -146,15 +145,13 @@ def get_http_response(ip, port):
         #     "Direct IP access not allowed | Cloudflare" in response.text):
         #     result = None
         # пропускаем всё что заявляет о недостаточных правах
-        elif response.status_code == 403:
-            result = None
 
     except Exception as e:
         logger.debug("Scan thread error: {}".format(e))
         pass
 
     finally:
-        if response is not None:
+        if response:
             response.close()
 
     return result
@@ -179,7 +176,7 @@ def ipsearch():
                 else:
                     data = get_http_response(ip, port)
 
-                if data is not None:
+                if data:
                     logger.info("IP found: {}:{}".format(ip, port))
                     # помещаем данные в очередь скриншотинг
                     screen_queue.put((ip, port, data))

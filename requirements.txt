@@ -3,3 +3,6 @@ pytelegrambotapi
 requests
 PySocks
 pillow
+telebot
+netaddr
+requests[socks]
