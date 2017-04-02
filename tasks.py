@@ -3,8 +3,12 @@
 import json
 import config
 import random
+import logging
 import requests
 import string
+
+logging.basicConfig(level=config.log_level, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(name="Tasks")
 
 task_total_weight = 0
 task_struct = {}
@@ -36,8 +40,8 @@ def get_task():
     task_chance = random.randint(0, task_total_weight)
     task = {}
     task_name = ""
-    if config.DEBUG:
-        print("Task chance: {}".format(task_chance))
+
+    logger.debug("Task chance: {}".format(task_chance))
 
     for task_name in task_struct:
         if task_chance <= task_struct[task_name]["chance"]:

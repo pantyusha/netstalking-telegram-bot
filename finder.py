@@ -14,6 +14,7 @@ import sys
 import time
 import re
 import netaddr
+import logging
 
 from globaldata import ip_found
 from globaldata import screen_queue
@@ -21,6 +22,9 @@ from globaldata import ip_ranges
 
 from screenshot import get_screenshot
 from sockshandler import SocksiPyHandler
+
+logging.basicConfig(level=config.log_level, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(name="Finder")
 
 # билдер запросов для FTP
 opener = urllib.request.build_opener(
@@ -74,10 +78,10 @@ def load_ip_ranges(file):
                     total_ranges += 1
 
                 except Exception:
-                    print("Error while adding range {}".format(line))
+                    logger.error("Error while adding range {}".format(line))
                     traceback.print_exc(file=sys.stdout)
     except Exception:
-        print("Error while loading ranges from {}, switched to fully random mode".format(file))
+        logger.error("Error while loading ranges from {}, switched to fully random mode".format(file))
         get_random_ip = get_fully_random_ip
 
     return total_ranges
@@ -146,9 +150,7 @@ def get_http_response(ip, port):
             result = None
 
     except Exception as e:
-        # раскомментить для отладки
-        # print("Scan thread error: {}".format(e))
-        # traceback.print_exc(file=sys.stdout)
+        logger.debug("Scan thread error: {}".format(e))
         pass
 
     finally:
@@ -168,9 +170,8 @@ def ipsearch():
 
             ip = get_random_ip()
             port = get_random_web_port()
-            
-            # if (config.DEBUG):
-            #    print("IP search: {}:{}...".format(ip, port))
+
+            # logger.debug("IP search: {}:{}...".format(ip, port))
 
             try:
                 if port == 21:
@@ -179,13 +180,13 @@ def ipsearch():
                     data = get_http_response(ip, port)
 
                 if data is not None:
-                    print("IP found: {}:{}".format(ip, port))
+                    logger.info("IP found: {}:{}".format(ip, port))
                     # помещаем данные в очередь скриншотинг
                     screen_queue.put((ip, port, data))
 
             except Exception as e:
-                print("Worker error: {}".format(e))
+                logger.error("Worker error: {}".format(e))
 
     except Exception as e:
-        print("Thread error: {}".format(e))
+        logger.error("Thread error: {}".format(e))
         return

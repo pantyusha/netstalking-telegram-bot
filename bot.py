@@ -12,6 +12,7 @@ import time
 import struct
 import socket
 import random
+import logging
 import requests
 import threading
 import traceback
@@ -20,7 +21,11 @@ import GeoIP
 
 from globaldata import ip_found
 
-print("Bot starting...")
+
+logging.basicConfig(level=config.log_level, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(name="Bot")
+
+logger.info("Bot starting...")
 bot = telebot.TeleBot(config.token, threaded=False)
 
 
@@ -33,8 +38,7 @@ def post_to_chat(chat_id, initiator):
     # определяем название файла скриншота
     img_filename = os.path.join(config.screen_folder, '{}_{}.png'.format(ip, port))
 
-    if config.DEBUG:
-        print(data)
+    logger.debug(data)
 
     # вытаскиваем геоданные по IP
     geoinfo = ""
@@ -56,7 +60,7 @@ def post_to_chat(chat_id, initiator):
 
     # если есть скриншот, то отправляем сообщение с ним
     if os.path.exists(img_filename):
-        print("Send random IP with image {}:{} to {}".format(ip, port, initiator))
+        logger.info("Send random IP with image {}:{} to {}".format(ip, port, initiator))
     
         bot.send_chat_action(chat_id, 'upload_photo')
 
@@ -64,7 +68,7 @@ def post_to_chat(chat_id, initiator):
         bot.send_photo(chat_id, img, caption="{}:{}".format(ip, port))
         img.close()
     else:
-        print("Send random IP {}:{} to {}".format(ip, port, initiator))
+        logger.info("Send random IP {}:{} to {}".format(ip, port, initiator))
     
     bot.send_message(chat_id, address_info)
 
@@ -88,14 +92,14 @@ def regular_posting():
             try:
                 post_to_chat("@"+chat, chat)
             except Exception:
-                print("Error while posting to {}".format(chat))
+                logger.error("Error while posting to {}".format(chat))
 
 
 # функция загрузки диапазонов из файла
 def load_ranges_from_file(filename):
     count = finder.load_ip_ranges(os.path.join(config.ranges_folder, filename))
     if count:
-        print("Loaded {} ranges from {}, scanning by ranges mode enabled".format(count, config.range_file))
+        logger.info("Loaded {} ranges from {}, scanning by ranges mode enabled".format(count, config.range_file))
         finder.get_random_ip = finder.get_random_ip_from_ranges
         return count
 
@@ -201,18 +205,18 @@ def hello_shampoo(message):
 
 if __name__ == '__main__':
 
-    print("Data preloading...")
+    logger.info("Data preloading...")
     gi = GeoIP.open("GeoLiteCity.dat", GeoIP.GEOIP_INDEX_CACHE | GeoIP.GEOIP_CHECK_CACHE)
     tasks.load()
 
-    print("Start threads generation...")
+    logger.info("Start threads generation...")
     # загружаем диапазоны для сканирования, если указаны в конфиге
     # можно вручную изменить командой /scan_from_file <название файла>
     # файл должен лежать в папке ranges_folder (по умолчанию ranges)
     if config.range_file != "":
         load_ranges_from_file(config.range_file)
     else:
-        print("Fully random scanning mode enabled")
+        logger.info("Fully random scanning mode enabled")
 
     # запускаем потоки сканирования
     for _ in range(config.max_search_threads):
@@ -228,7 +232,7 @@ if __name__ == '__main__':
 
     # включаем при необходимости автопостинг (нет, отключить пока нельзя)
     if config.autoposting and len(config.chats): 
-        print("Autoposting enabled for {}".format(", ".join(config.chats)))
+        logger.info("Autoposting enabled for {}".format(", ".join(config.chats)))
         t = threading.Thread(target=regular_posting)
         t.daemon = True
         t.start()
@@ -238,12 +242,12 @@ if __name__ == '__main__':
     no_exit = True
     while no_exit:
         try:
-            print("YA RODILSYA!!!")
+            logger.info("YA RODILSYA!!!")
             bot.polling(none_stop=True, interval=1)        
             
         except Exception as e:
             traceback.print_exc(file=sys.stdout)
-            print(e)
-            print("Manually closed!")
+            logger.error(e)
+            logger.error("Manually closed!")
             no_exit = False
             sys.exit(0)
