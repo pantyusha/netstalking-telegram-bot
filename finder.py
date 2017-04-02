@@ -188,7 +188,7 @@ def ipsearch():
                 if port == 21:
                     data = get_ftp_response(ip)
                 else:
-                    data = get_http_response('213.178.227.141', 80)
+                    data = get_http_response(ip, 80)
 
                 if data:
                     logger.info("IP found: {}:{}".format(ip, port))
