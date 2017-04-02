@@ -3,20 +3,27 @@
 import json
 import config
 import random
+import logging
 import requests
 import string
+
+logging.basicConfig(level=config.log_level, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(name="Tasks")
 
 task_total_weight = 0
 task_struct = {}
 
+
 def random_string(len):
     return ''.join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(len))
 
+
 def load():
     global task_struct
-    task_struct = json.load(open(config.task_file,'r'))
+    task_struct = json.load(open(config.task_file, 'r'))
     chances_create()
     random.seed()
+
 
 def chances_create():
     sum = 0
@@ -27,13 +34,14 @@ def chances_create():
         sum += weight
     task_total_weight = sum
 
+
 def get_task():
     global task_total_weight
     task_chance = random.randint(0, task_total_weight)
     task = {}
+    task_name = ""
 
-    if config.DEBUG:
-        print("Task chance: {}".format(task_chance))
+    logger.debug("Task chance: {}".format(task_chance))
 
     for task_name in task_struct:
         if task_chance <= task_struct[task_name]["chance"]:
@@ -41,7 +49,7 @@ def get_task():
             break
 
     if task == {}:
-        return ("wtf with task?")   
+        return "wtf with task?"
 
     hashtags = ' '.join(["#{}".format(hashtag) for hashtag in task["hashtags"]])
 
@@ -49,10 +57,10 @@ def get_task():
         keyword = random.choice(task["keywords"])
         links_str = '\n'.join([link.format(keyword) for link in task["links"]])
 
-        return "{0}\nПоищи IP по запросу {1}\n{2}".format(hashtags,keyword, links_str)
+        return "{0}\nПоищи IP по запросу {1}\n{2}".format(hashtags, keyword, links_str)
 
     elif task_name == "random_symbols_search":
-        length = random.randint(task["min_length"],task["max_length"])
+        length = random.randint(task["min_length"], task["max_length"])
         rand_string = random_string(length)      
         links_str = '\n'.join([link.format(rand_string) for link in task["links"]])
 

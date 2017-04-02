@@ -3,6 +3,7 @@
 import os
 import time
 import config
+import logging
 from PIL import Image, ImageChops
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -11,16 +12,19 @@ from globaldata import screen_queue
 from globaldata import ip_found
 from contextlib import contextmanager
 
+logging.basicConfig(level=config.log_level, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(name="Screenshot")
+
 # функция для обрезки монотонных областей
 # сейчас не используется
 def trim(im):
-    pixel = (255,255,255) # ориентируемся на белый цвет
-    #pixel = im.getpixel((0,0)) # ориентируемся на пиксель с левого верхнего края
+    pixel = (255, 255, 255)  # ориентируемся на белый цвет
+    # pixel = im.getpixel((0,0))  # ориентируемся на пиксель с левого верхнего края
     bg = Image.new(im.mode, im.size, pixel)
     diff = ImageChops.difference(im, bg)
     diff = ImageChops.add(diff, diff, 2.0, -100)
     bbox = diff.getbbox()
-    print(bbox)
+    logger.info(bbox)
     if bbox:
         return im.crop(bbox)
     else:
@@ -28,7 +32,7 @@ def trim(im):
 
 
 def get_screenshot(ip, port):
-    thumfile = os.path.join(config.screen_folder,'{}_{}.png'.format(ip, port))
+    thumfile = os.path.join(config.screen_folder, '{}_{}.png'.format(ip, port))
     url = 'http://{}:{}/'.format(ip, port)
 
     service_args = [
@@ -52,8 +56,9 @@ def get_screenshot(ip, port):
     # img = trim(img)
     img.save(thumfile)
 
-    print("Saved screen of {}:{}".format(ip, port))
-    
+    logger.info("Saved screen of {}:{}".format(ip, port))
+
+
 def screener():
     try:
         while True:
@@ -62,20 +67,19 @@ def screener():
 
             ip, port, data = screen_queue.get()
             try:
-                print("Take {}:{} from screen queue".format(ip, port))
+                logger.info("Take {}:{} from screen queue".format(ip, port))
                 get_screenshot(ip, port)
 
             except Exception as e:
-                print("Screen worker error: {}".format(e))
+                logger.error("Screen worker error: {}".format(e))
 
             finally:
                 screen_queue.task_done() 
 
                 # помещаем результат в очередь на отправку вне зависимости от наличия скриншота
-                print("Put {}:{} to result queue".format(ip, port))
+                logger.info("Put {}:{} to result queue".format(ip, port))
                 ip_found.put((ip, port, data))
-                    
 
     except Exception as e:
-        print("Screen thread error: {}".format(e))
+        logger.error("Screen thread error: {}".format(e))
         return

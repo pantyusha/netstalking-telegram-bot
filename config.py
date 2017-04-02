@@ -1,12 +1,15 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 # режим отладки. при установке в True будет использован другой бот и параметры (см. ниже)
+import logging
+
 DEBUG = True
+log_level = logging.DEBUG if DEBUG else logging.INFO
 
 # настройки Tor
 tor_host = "127.0.0.1"
 tor_port = "9150"
-tor_proxy = {'http':'socks5://{}:{}'.format(tor_host, tor_port)}
+tor_proxy = {'http': 'socks5://{}:{}'.format(tor_host, tor_port)}
 
 # список портов для сканирования
 ports = [21, 80, 81, 82, 83, 8000, 8080, 8081, 9000, 9080]
