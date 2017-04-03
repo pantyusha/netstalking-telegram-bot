@@ -29,9 +29,6 @@ opener = urllib.request.build_opener(
 )
 urllib.request.install_opener(opener)
 
-# regexp для извлечения заголовка
-title_regex = re.compile(r'<title.*?>(.+?)</title>', re.IGNORECASE)
-
 # ФУНКЦИИ РАНДОМИЗАЦИИ 
 
 
@@ -144,13 +141,13 @@ def get_http_response(ip, port):
         # по-хорошему, надо вынести в конфиг или отдельный файл
 
         # пропускаем Akamai
-        if response.status_code in [400, 403] \
-                and "Server" in response.headers \
-                and response.headers["Server"] == "AkamaiGHost" \
-                and "<H1>Invalid URL</H1>" in   text:
-            result = None
+        # if response.status_code == 400 \
+        #         and "Server" in response.headers \
+        #         and response.headers["Server"] == "AkamaiGHost" \
+        #         and "<H1>Invalid URL</H1>" in content:
+        #     result = None
         # пропускаем всё что требует авторизации на уровне браузера
-        elif response.status_code == 401:
+        if response.status_code in [400, 401, 403, 500]:
             result = None
         # пропускаем Cloudflare 1003
         # elif (response.status_code == 403 and

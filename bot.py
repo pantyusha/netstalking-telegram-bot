@@ -125,9 +125,9 @@ def get_ip_every(message):
                              reply_to_message_id=message.message_id)
 
 
-# получение количества результатов в очереди
+# получение информации о количестве результатов в очереди
 # нет аргументов
-@bot.message_handler(commands=["get_scanned_count"])
+@bot.message_handler(commands=["status"])
 def get_scanned_count(message):
     bot.send_message(message.chat.id,
                      "Scanned IP in queue: {}".format(ip_found.qsize()),
@@ -185,7 +185,22 @@ def scan_from_file(message):
 @bot.message_handler(commands=["scan_random"])
 def scan_random(message):
     if message.from_user.username == config.admin_username:
+        finder.get_random_ip = finder.get_fully_random_ip
         bot.send_message(message.chat.id, "Fully random scanning mode enabled")
+    else:
+        bot.send_message(message.chat.id, "Sorry, this can do Master shampoo only!",
+                         reply_to_message_id=message.message_id)
+
+
+# очистка результатов
+# нет аргументов
+@bot.message_handler(commands=["clear_results"])
+def scan_random(message):
+    if message.from_user.username == config.admin_username:
+        with ip_found.mutex:
+            ip_found.queue.clear()
+        bot.send_message(message.chat.id, "Results queue cleared!")
+        logger.info("Results queue cleared!")
     else:
         bot.send_message(message.chat.id, "Sorry, this can do Master shampoo only!",
                          reply_to_message_id=message.message_id)

@@ -1,10 +1,12 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 # режим отладки. при установке в True будет использован другой бот и параметры (см. ниже)
+import os
 import logging
 
-DEBUG = True
-log_level = logging.DEBUG if DEBUG else logging.INFO
+DEBUG = os.environ["PYDEBUG"]=="1" if "PYDEBUG" in os.environ else False
+
+log_level = logging.INFO if DEBUG else logging.INFO
 
 # настройки Tor
 tor_host = "127.0.0.1"
@@ -15,7 +17,7 @@ tor_proxy = {'http': 'socks5://{}:{}'.format(tor_host, tor_port)}
 ports = [21, 80, 81, 82, 83, 8000, 8080, 8081, 9000, 9080]
 
 # количество адресов-результатов в пуле
-max_ip_pool = 200
+max_ip_pool = 1000
 # количество тредов для скана
 max_search_threads = 700
 # количество тредов для снятия скринов
@@ -26,7 +28,7 @@ http_wait = 30
 # задержка ожидания загрузки страницы для скриншотинга
 screen_wait = 30
 # задержка ожидания отработки скриптов для скриншотинга
-screen_script_wait = 30
+screen_script_wait = 60
 # пауза перед скриншотингом
 screen_pause = 10
 # размеры снимаемых скриншотов
@@ -57,7 +59,7 @@ ranges_folder = "ranges"
 
 # файл с диапазонами, загружаемый по умолчанию
 # оставить пустым для скана по рандому
-range_file = "syria.txt"
+range_file = ""
 
 # файл с заданиями
 task_file = "tasks.json"
