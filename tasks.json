@@ -1,11 +1,11 @@
 {
     "random_onion": { 
-        "weight": 50,
+        "weight": 30,
         "url": "http://62.142.11.10/parazit1/onion.php",
         "hashtags": ["tor", "netrandom"]
     },
     "keyword_ip_search": {
-        "weight": 50,
+        "weight": 30,
         "links": [
             "shodan.io/search?query={}",
             "censys.io/ipv4?q={}"
@@ -17,7 +17,7 @@
         "weight": 50,
         "symbols": ["0123456789abcdefghijklmnopqrtsuvwxyz"],
         "min_length": 4,
-        "max_length": 7,
+        "max_length": 5,
         "links": [
             "google.ru?q={}",
             "duckduckgo.com?q={}",
@@ -41,7 +41,8 @@
             {
                 "name": "I2P",
                 "links": [
-                    "https://geti2p.net/en/"
+                    "https://geti2p.net/en/",
+                    "http://rus.i2p/"
                 ],
                 "hashtags": ["i2p"]
             },
@@ -117,7 +118,7 @@
                     "https://en.wikipedia.org/wiki/Perfect_Dark_(P2P)",
                     "https://perfectdark.benri-tool.net/"
                 ],
-                "hashtags": ["p2p"]
+                "hashtags": ["perfectdark","dht"]
             },
             {
                 "name": "RetroShare",
@@ -222,6 +223,21 @@
                     "https://aresgalaxy.io/"
                 ],
                 "hashtags": ["ares","bittorrent"]
+            },
+            {
+                "name": "Netsukuku",
+                "links": [
+                    "http://netsukuku.freaknet.org/",
+                    "https://openhub.net/p/netsukuku"
+                ],
+                "hashtags": ["netsukuku","p2p"]
+            },
+            {
+                "name": "Filetopia",
+                "links": [
+                    "https://www.filetopia.org/"
+                ],
+                "hashtags": ["filetopia","p2p"]
             }
         ],
         "hashtags": ["darknet"]
