@@ -248,16 +248,11 @@ if __name__ == '__main__':
         t.start()
 
     # магия с циклом для бесконечного переподключения и выхода по Ctrl+C
-    # почему не вебхук? просто нахуй, ок?
-    no_exit = True
-    while no_exit:
-        try:
-            logger.info("YA RODILSYA!!!")
-            bot.polling(none_stop=True, interval=1)        
-            
-        except Exception as e:
-            traceback.print_exc(file=sys.stdout)
-            logger.error(e)
-            logger.error("Manually closed!")
-            no_exit = False
-            sys.exit(0)
+while True:
+    try:
+        logger.info("Bot started")
+        bot.polling(none_stop=True)
+    except Exception as e:
+        logger.error(e)
+        logger.error("An error has occurred, retrying")
+        time.sleep(15)
